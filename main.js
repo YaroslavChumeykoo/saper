@@ -47,7 +47,10 @@ block.forEach((element, index) =>{
         if(block[index + 10] && index != 8 && (index % 9) != 8)
             if(block[index + 10].classList.contains('bomba'))
             counter++
-        element.innerHTML = counter
+        if(counter == 0)
+            element.innerHTML = ''
+        else element.innerHTML = counter
+        
         
     }
     element.style.backgroundColor = 'black'
@@ -66,6 +69,28 @@ function onBlockClick(event){
     proverka(event.target, Number(event.target.id))
 }
 
+block.forEach((item) =>{
+    item.addEventListener('contextmenu', unbomber)
+})
+
+function unbomber(event){
+    event.preventDefault()
+    if(event.target.style.backgroundColor == 'black'){
+        event.target.style.backgroundColor = 'orange'
+        event.target.style.color = 'orange'
+        event.target.removeEventListener('contextmenu', unbomber)
+        event.target.addEventListener('contextmenu', ununbomber)
+    }
+    
+}
+function ununbomber(event){
+    if(event.target.style.backgroundColor == 'orange'){
+        event.target.style.backgroundColor = 'black'
+        event.target.style.color = 'black'
+        event.target.addEventListener('contextmenu', unbomber)
+        event.target.removeEventListener('contextmenu', ununbomber)
+    }
+}
 const end = document.querySelector('h1')
 const but = document.querySelector('button')
 but.addEventListener('click', winer)
@@ -73,6 +98,10 @@ but.addEventListener('click', winer)
 function winer(){
     let counter = 0
     block.forEach((element) =>{
+        if(element.style.backgroundColor == 'orange' && element.classList.contains('bomba'))
+            counter++
+        if(element.style.backgroundColor == 'orange' && element.classList.contains('bomba') == false)
+            counter = 0
         if(element.style.backgroundColor == 'black')
             counter++
         })
@@ -86,6 +115,7 @@ function winer(){
 function proverka(element,index_el){
     if(element.classList.contains('bomba')){
         element.style.backgroundColor = 'red'
+        element.style.color = 'black'
         end.innerHTML = 'Game over'
         block.forEach((item) =>{
             item.removeEventListener('click', onBlockClick)
@@ -94,9 +124,11 @@ function proverka(element,index_el){
     }
     if(element.classList.contains('bomba') == false){
         element.style.backgroundColor = 'pink'
+        element.style.color = 'black'
     }
-    if(element.innerHTML == 0 && element.classList.contains('bomba') == false){
+    if(element.innerHTML == '' && element.classList.contains('bomba') == false){
         element.style.backgroundColor = 'green'
+        element.style.color = 'black'
         vniz(index_el)
         vverx(index_el)
     }
